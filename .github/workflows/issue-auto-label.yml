@@ -1,0 +1,39 @@
+name: Issue auto-label
+
+# Adds area, platform and severity labels from the answers of the issue forms.
+# The issue body is untrusted: it is read from the event file by the script and
+# never interpolated into a shell command.
+
+on:
+  issues:
+    types: [opened]
+
+permissions: {}
+
+jobs:
+  label:
+    if: github.event.issue.pull_request == null
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    permissions:
+      contents: read
+      issues: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          sparse-checkout: .github/scripts
+      - name: Add labels from the form answers
+        env:
+          GH_TOKEN: ${{ github.token }}
+          NUMBER: ${{ github.event.issue.number }}
+        run: |
+          labels=$(python3 .github/scripts/issue_form_labels.py "$GITHUB_EVENT_PATH")
+          if [ -z "$labels" ]; then
+            echo "No form answers map to labels."
+            exit 0
+          fi
+          args=()
+          while IFS= read -r label; do args+=(-f "labels[]=$label"); done <<< "$labels"
+          echo "Adding: ${labels//$'\n'/ }"
+          gh api "repos/$GITHUB_REPOSITORY/issues/$NUMBER/labels" --method POST "${args[@]}" --silent

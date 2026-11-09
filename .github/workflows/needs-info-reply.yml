@@ -1,0 +1,35 @@
+name: Needs-info reply
+
+# When the author of an issue labelled needs-info comments, remove needs-info,
+# add needs-triage, and reopen the issue if the needs-info automation closed it.
+
+on:
+  issue_comment:
+    types: [created]
+
+permissions: {}
+
+concurrency:
+  group: needs-info-${{ github.event.issue.number }}
+  cancel-in-progress: false
+
+jobs:
+  reply:
+    if: >-
+      github.event.issue.pull_request == null &&
+      contains(github.event.issue.labels.*.name, 'needs-info') &&
+      github.event.comment.user.login == github.event.issue.user.login
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    permissions:
+      contents: read
+      issues: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          sparse-checkout: .github/scripts
+      - name: Handle the reply
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python3 .github/scripts/needs_info.py reply "$GITHUB_EVENT_PATH"

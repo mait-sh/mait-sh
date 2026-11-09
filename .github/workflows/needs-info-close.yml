@@ -1,0 +1,42 @@
+name: Needs-info close
+
+# Daily: closes open issues labelled needs-info when the author has not
+# replied for 7 days after the label was added.
+
+on:
+  schedule:
+    - cron: "23 6 * * *"
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: Only print what would be closed
+        type: boolean
+        default: true
+
+permissions: {}
+
+concurrency:
+  group: needs-info
+  cancel-in-progress: false
+
+jobs:
+  sweep:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      issues: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          sparse-checkout: .github/scripts
+      - name: Close stale needs-info issues
+        env:
+          GH_TOKEN: ${{ github.token }}
+          # Empty on the schedule, so the daily run closes issues.
+          DRY_RUN: ${{ inputs.dry_run }}
+        run: |
+          args=()
+          if [ "$DRY_RUN" = true ]; then args+=(--dry-run); fi
+          python3 .github/scripts/needs_info.py sweep "${args[@]}"
