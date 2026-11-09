@@ -1,0 +1,76 @@
+# Labels for mait-sh/mait-sh, applied by .github/workflows/label-sync.yml.
+# Format: a flat list; each item has name, color (6 hex digits, no #) and description.
+# Keep values on one line and do not use "#" inside a value.
+
+# Type
+- name: bug
+  color: "d73a4a"
+  description: "Something does not work as documented or as expected"
+- name: enhancement
+  color: "a2eeef"
+  description: "A suggested improvement or new capability"
+- name: question
+  color: "d876e3"
+  description: "A question about using MAIT"
+
+# Status
+- name: needs-triage
+  color: "ededed"
+  description: "New; the MAIT Team has not looked at it yet"
+- name: needs-info
+  color: "fbca04"
+  description: "Waiting for the author; closes after 7 days without a reply"
+- name: needs-repro
+  color: "f9d0c4"
+  description: "We could not reproduce it yet; steps or details needed"
+- name: confirmed
+  color: "0e8a16"
+  description: "Reproduced or accepted by the MAIT Team"
+- name: in-progress
+  color: "1d76db"
+  description: "Being worked on"
+- name: duplicate
+  color: "cfd3d7"
+  description: "Already reported in another issue"
+- name: wontfix
+  color: "ffffff"
+  description: "Will not be worked on"
+
+# Area
+- name: aidcx
+  color: "c5def5"
+  description: "Area: the aidcx launcher and project containers"
+- name: mcp
+  color: "c5def5"
+  description: "Area: agent tools (MCP servers)"
+- name: desktop
+  color: "c5def5"
+  description: "Area: desktop and graphical sessions"
+- name: docs
+  color: "c5def5"
+  description: "Area: documentation"
+- name: portal
+  color: "c5def5"
+  description: "Area: the portal at mait.sh"
+
+# Platform
+- name: linux
+  color: "bfdadc"
+  description: "Platform: Linux"
+- name: mac
+  color: "bfdadc"
+  description: "Platform: macOS on Apple Silicon"
+- name: windows
+  color: "bfdadc"
+  description: "Platform: Windows with WSL 2"
+
+# Severity
+- name: sev-blocker
+  color: "b60205"
+  description: "Severity: blocks use"
+- name: sev-major
+  color: "d93f0b"
+  description: "Severity: a workaround exists"
+- name: sev-minor
+  color: "fef2c0"
+  description: "Severity: cosmetic"
