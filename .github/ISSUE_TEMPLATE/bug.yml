@@ -1,0 +1,161 @@
+name: Report a problem
+description: Something in MAIT does not work as documented or as you expected.
+title: "[Bug]: "
+labels:
+  - bug
+  - needs-triage
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for reporting a problem. MAIT is in beta, and reports are handled on a best-effort basis.
+
+        **Do not post secrets, tokens, private keys or personal data.** For a security vulnerability, do not open an issue: email security@mait.sh (see [SECURITY.md](https://github.com/mait-sh/mait-sh/security/policy)).
+
+        Before you start, search the [existing issues](https://github.com/mait-sh/mait-sh/issues?q=is%3Aissue) and the [troubleshooting guide](https://mait.sh/docs/troubleshooting).
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: Describe what you saw. Include the exact error message, if there was one.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What did you expect to happen?
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: Numbered steps, starting from a clean state if you can, including the exact commands.
+      value: |
+        1.
+        2.
+        3.
+    validations:
+      required: true
+  - type: dropdown
+    id: platform
+    attributes:
+      label: Where did you run this?
+      description: On Mac and Windows, MAIT commands run inside `aidcx terminal`.
+      options:
+        - Linux
+        - Mac, inside aidcx terminal
+        - Windows, inside aidcx terminal
+        - Not on my computer (portal or docs)
+    validations:
+      required: true
+  - type: dropdown
+    id: component
+    attributes:
+      label: MAIT component
+      description: Which part of MAIT is affected? Choose "Other or not sure" if you do not know.
+      options:
+        - aidcx launcher and project containers
+        - Agent tools (MCP servers)
+        - Desktop and graphical sessions
+        - Documentation
+        - Portal (mait.sh, account, sign-in)
+        - Other or not sure
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Version
+      description: The output of `aidcx version`, or the version of the component if you know it.
+    validations:
+      required: false
+  - type: markdown
+    attributes:
+      value: |
+        ### Collect diagnostics
+
+        Copy the command below and paste it into a terminal:
+
+        - On **Linux**, run it in your normal terminal.
+        - On **Mac** and **Windows**, run it **inside `aidcx terminal`**: the native host refuses most of these commands.
+        - Run it from your **project directory**, so that `aidcx list` shows your project's containers. If you have more than one container, set `NAME` at the top to the container name shown by `aidcx list`.
+        - **Review the output before you post it.** `aidcx doctor` prints your account's feature grants and the path of your credential, and the redaction of secrets is best effort. Remove anything you do not want to share.
+
+        ```bash
+        bash <<'EOF'
+        # aidcx diagnostics for a bug report. Run from your project directory, on Linux
+        # or inside `aidcx terminal` (Mac, Windows). Set NAME to a container name from
+        # `aidcx list` if you have more than one. Review the output before posting.
+        NAME=""
+        SEL=""; [ -n "$NAME" ] && SEL="--name $NAME"
+        redact() {
+          sed -E \
+            -e '/-----BEGIN [A-Z ]*PRIVATE KEY-----/,/-----END [A-Z ]*PRIVATE KEY-----/c\<redacted private key>' \
+            -e 's#(://)[^/@[:space:]]+@#\1<redacted>@#g' \
+            -e 's#((authorization|proxy-authorization|x-api-key|cookie|set-cookie)[[:space:]]*[=:][[:space:]]*).*#\1<redacted>#I' \
+            -e 's#\b(Bearer|Basic|Token)[[:space:]]+[A-Za-z0-9._~+/=-]+#\1 <redacted>#Ig' \
+            -e 's#([A-Za-z0-9_.-]*(token|secret|passw(or)?d|passwd|credential|api[_-]?key|private[_-]?key|_key|apikey|authorization|bearer)[A-Za-z0-9_.-]*[[:space:]]*[=:][[:space:]]*)("[^"]*"|'"'"'[^'"'"']*'"'"'|[^[:space:];&|,]+)#\1<redacted>#Ig' \
+            -e 's#("[A-Za-z0-9_.-]*(token|secret|passw(or)?d|passwd|credential|api[_-]?key|private[_-]?key|_key|apikey|authorization|bearer)[A-Za-z0-9_.-]*"[[:space:]]*:[[:space:]]*)("[^"]*"|[^,}[:space:]]+)#\1"<redacted>"#Ig' \
+            -e 's#\b(gh[pousr]_[A-Za-z0-9]{20,}|github_pat_[A-Za-z0-9_]{20,}|sk-[A-Za-z0-9_-]{20,}|xox[baprs]-[A-Za-z0-9-]{10,}|AKIA[0-9A-Z]{16}|eyJ[A-Za-z0-9_-]{8,}\.[A-Za-z0-9_-]{8,}\.[A-Za-z0-9_-]*)#<redacted>#g' \
+            -e 's#(^|[^A-Za-z0-9+/_.-])[A-Za-z0-9+_-]{40,}={0,2}#\1<redacted>#g' \
+            -e "s#${HOME:-/nonexistent}#~#g"
+        }
+        run() {
+          echo; echo "### $*"
+          if command -v timeout >/dev/null 2>&1; then timeout 90 "$@" </dev/null 2>&1; else "$@" </dev/null 2>&1; fi
+          echo "[exit $?]"
+        }
+        {
+          echo "date:   $(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          echo "os:     $(uname -srm 2>&1)"
+          [ -r /etc/os-release ] && echo "distro: $(. /etc/os-release; echo "$PRETTY_NAME")"
+          run aidcx version
+          run aidcx list
+          run aidcx workspace list
+          run aidcx doctor
+          run aidcx health $SEL
+          run aidcx inspect $SEL
+        } 2>&1 | redact | tee "${TMPDIR:-/tmp}/aidcx-diagnostics.txt"
+        echo; echo "Also saved to ${TMPDIR:-/tmp}/aidcx-diagnostics.txt - check it, then paste it into the report."
+        EOF
+        ```
+
+        **Getting more detail.** Start the container with `aidcx start --debug`. This writes a redacted start journal to `~/.aidcx/start-journal/` on the machine where `aidcx` runs and, once the container is running, to `/var/log/aidcx/start-latest.log` inside the container. `aidcx logs` shows that journal, and `aidcx logs --docker` shows the log of the Docker daemon inside the container. The `aidcx` audit log is `~/.aidcx/audit.log`. Review these files before you attach any part of them.
+  - type: textarea
+    id: environment
+    attributes:
+      label: Diagnostics output
+      description: Paste the output of the command above, after reviewing it.
+      render: text
+    validations:
+      required: false
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs and other output (optional)
+      description: Any other relevant output or log lines. **Redact secrets, tokens, keys and personal data before you paste.**
+      render: text
+    validations:
+      required: false
+  - type: dropdown
+    id: severity
+    attributes:
+      label: How bad is it?
+      options:
+        - Blocks use (I cannot continue)
+        - Workaround exists
+        - Cosmetic
+    validations:
+      required: true
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Before you submit
+      options:
+        - label: I searched the existing issues, including closed ones.
+          required: true
+        - label: I am on the latest release available to me.
+          required: true
+        - label: There are no secrets, tokens, private keys or personal data in this report.
+          required: true

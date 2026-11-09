@@ -1,0 +1,18 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Security vulnerability
+    url: https://github.com/mait-sh/mait-sh/security/policy
+    about: Do not open a public issue. Email security@mait.sh privately; the security policy explains what to include.
+  - name: Documentation
+    url: https://mait.sh/docs
+    about: Guides for installing, using, updating and troubleshooting MAIT.
+  - name: Troubleshooting
+    url: https://mait.sh/docs/troubleshooting
+    about: Fixes for common problems, before you report one.
+  - name: Other support
+    url: https://github.com/mait-sh/mait-sh/blob/main/SUPPORT.md
+    about: Where to ask what. General contact by email at support@mait.sh.
+  # DISCUSSIONS SWITCH: Discussions are OFF. When the owner enables them, add:
+  # - name: Questions and ideas
+  #   url: https://github.com/mait-sh/mait-sh/discussions
+  #   about: Ask the MAIT community and the MAIT Team.

@@ -1,0 +1,31 @@
+name: Ask a question
+description: A question about using MAIT that the documentation does not answer.
+title: "[Question]: "
+labels:
+  - question
+  - needs-triage
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Check the [documentation](https://mait.sh/docs) and the [troubleshooting guide](https://mait.sh/docs/troubleshooting) first. If something is broken, use the [bug form](https://github.com/mait-sh/mait-sh/issues/new?template=bug.yml) instead. Answers are given on a best-effort basis. Do not post secrets, tokens or personal data.
+  - type: textarea
+    id: question
+    attributes:
+      label: Your question
+      description: What do you want to know or do? What have you tried, and which docs page did you read?
+    validations:
+      required: true
+  - type: dropdown
+    id: component
+    attributes:
+      label: MAIT component
+      options:
+        - aidcx launcher and project containers
+        - Agent tools (MCP servers)
+        - Desktop and graphical sessions
+        - Documentation
+        - Portal (mait.sh, account, sign-in)
+        - Other or not sure
+    validations:
+      required: false

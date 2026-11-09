@@ -1,0 +1,64 @@
+name: Suggest an improvement
+description: Tell us about a problem MAIT could solve better, or something it should do.
+title: "[Enhancement]: "
+labels:
+  - enhancement
+  - needs-triage
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for the suggestion. Describe the problem you are trying to solve first; the solution can come later. MAIT is in beta, and suggestions are handled on a best-effort basis.
+
+        Search the [existing issues](https://github.com/mait-sh/mait-sh/issues?q=is%3Aissue) first. Do not post secrets, tokens or personal data.
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem are you trying to solve?
+      description: Describe the problem or the task, not the solution. What are you trying to do, and what gets in the way?
+    validations:
+      required: true
+  - type: textarea
+    id: who
+    attributes:
+      label: Who does it affect?
+      description: You alone, your team, a kind of project or a kind of user? How often does it come up?
+    validations:
+      required: true
+  - type: textarea
+    id: workaround
+    attributes:
+      label: What do you do today instead?
+      description: Your current workaround, if you have one.
+    validations:
+      required: false
+  - type: textarea
+    id: idea
+    attributes:
+      label: Ideas for a solution (optional)
+    validations:
+      required: false
+  - type: dropdown
+    id: component
+    attributes:
+      label: MAIT component
+      description: Which part of MAIT is this about? Choose "Other or not sure" if you do not know.
+      options:
+        - aidcx launcher and project containers
+        - Agent tools (MCP servers)
+        - Desktop and graphical sessions
+        - Documentation
+        - Portal (mait.sh, account, sign-in)
+        - Other or not sure
+    validations:
+      required: true
+  - type: dropdown
+    id: importance
+    attributes:
+      label: How important is this to you?
+      options:
+        - Nice to have
+        - Important for my work
+        - I cannot use MAIT for my work without it
+    validations:
+      required: true
